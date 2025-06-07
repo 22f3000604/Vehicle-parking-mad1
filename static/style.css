@@ -1,6 +1,9 @@
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
+    background-image: url("static/images/background _image.jpg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    height: 100vh;
     margin: 0;
-    padding: 20px;
+    font-family: Arial, sans-serif;
 }
