@@ -1,5 +1,5 @@
 body {
-    background-image: url('/workspaces/Vehicle-parking-mad1/static/images/bi.jpg');
+    background-image: url('../images/bi.jpg');
     background-size: cover; /* Ensures the image covers the entire background */
     background-repeat: no-repeat; /* Prevents the image from repeating */
     background-position: center; /* Centers the image */

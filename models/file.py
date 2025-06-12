@@ -1,9 +1,9 @@
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 
-db = SQLALchemy()
+db = SQLAlchemy()
 
-class User(db.model):
+class User(db.Model):
     id = db.Column(db.Integer,primary_key = True)
     name = db.Column(db.String(80),nullable = False)
     email = db.Column(db.String(120),unique = True,nullable = False)
@@ -11,12 +11,12 @@ class User(db.model):
     password = db.Column(db.String(80),nullable = False)
     Reservation = db.relationship('Reservation',backref = 'user',lazy = True)
 
-class Admin(db.model):
+class Admin(db.Model):
     id = db.Column(db.Integer,primary_key = True)
     username = db.Column(db.String(80),nullable = False)
     password = db.Column(db.String(80),nullable = False)
 
-class ParkingLot(db.model):
+class ParkingLot(db.Model):
     id = db.Column(db.Integer,primary_key = True)
     prime_location_name = db.Column(db.String(80),nullable = False)
     price  = db.Column(db.Float,nullable = False)
@@ -25,12 +25,12 @@ class ParkingLot(db.model):
     maximum_number_of_spots = db.Column(db.Integer,nullable = False)
     Reservation = db.relationship('Reservation',backref = 'parkinglot',lazy = True)
 
-class ParkingSpot(db.model):
+class ParkingSpot(db.Model):
     id = db.Column(db.Integer,primary_key = True)
     lot_id = db.Column(db.Integer,db.ForeignKey('parking_lot.id'),nullable = False)
     status = db.Column(db.String(20),nullable = False)  # e.g., 'available', 'reserved', 'occupied'
 
-class ReservationParkingSpot(db.model):
+class ReservationParkingSpot(db.Model):
 
     id = db.Column(db.Integer,primary_key = True)
     spot_id = db.Column(db.Integer,db.ForeignKey('parking_spot.id'),nullable = False)
