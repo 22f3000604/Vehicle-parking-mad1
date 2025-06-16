@@ -1,6 +1,22 @@
 body {
-    background-image: url('../images/bi.jpg');
-    background-size: cover; /* Ensures the image covers the entire background */
-    background-repeat: no-repeat; /* Prevents the image from repeating */
-    background-position: center; /* Centers the image */
+    background-image: url('/static/images/bi.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-attachment: fixed;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
 }
+button {
+    background-color: #1e90ff;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: none;
+    font-weight: bold;
+    transition: background 0.3s ease;
+  }
+  button:hover {
+    background-color: #0066cc;
+  }

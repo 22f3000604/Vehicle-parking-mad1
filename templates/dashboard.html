@@ -1,13 +1,23 @@
-{% extends "base.html"%}
-
-{% block head %}
-<h2 class = "first">Quick Park</h2>
-{% endblock %}
+{% extends "base.html" %}
 
 {% block body %}
-<div class="dashboard">
-    <h1>Welcome to Quick Park Dashboard</h1>
- 
+<div class="dashboard-container">
+    <nav class="dashboard-nav">
+        <h2>Welcome, {{ user.name }}</h2>
+        <a href="{{ url_for('logout') }}" class="btn">Logout</a>
+    </nav>
+    
+    <div class="dashboard-content">
+        <section class="booking-section">
+            <h3>Available Parking Spots</h3>
+            {% for spot in parking_spots %}
+            <div class="spot-card">
+                <p>Spot ID: {{ spot.id }}</p>
+                <p>Status: {{ spot.status }}</p>
+                <a href="{{ url_for('book_spot', spot_id=spot.id) }}" class="btn">Book Now</a>
+            </div>
+            {% endfor %}
+        </section>
+    </div>
 </div>
 {% endblock %}
-

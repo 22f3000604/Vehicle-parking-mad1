@@ -1,27 +1,26 @@
 {% extends "base.html" %}
 {% block head %}
-<h1 class = "login-head"> Quick Park</h1>
+<h1 class="login-head">Quick Park</h1>
 {% endblock %}
 
 {% block body %}
-<div class = login-form>
-    <form action="{{ url_for('login') }}" method = "POST"></form>
-    <H2 class = "login"> Log In</H2>
-    <div class = "login-form">
-        <label for="username">Username</label>
-        <input type="text" name="username" id="username" required>
-    </div>
-    <div class  = "login-form">
-        <label for="password">Password :</label>
-        <input type="password" id = "password" name = "password" required>
-    </div>
-    <button type ="submit" class = "all-button"> Submit </button>
-</div>
+<div class="login-form">
+    <form action="{{ url_for('login') }}" method="POST">
+        <h2 class="login">Log In</h2>
+        <div class="login-form">
+            <label for="username">Username :</label>
+            <input type="text" name="username" id="username" required>
+        </div>
+        <div class="login-form">
+            <label for="password">Password :</label>
+            <input type="password" id="password" name="password" required>
+        </div>
+        <button type="submit" class="all-button">Submit</button>
     </form>
-
-
-<div class = login-end> 
-    <p >Don't have a account</p>
-    <a href="{{ url_for('signup' ) }}"  class = "signup-link">Sign Up</a>
 </div>
-{% endblock%}
+
+<div class="login-end">
+    <p>Don't have an account?</p>
+    <a href="{{ url_for('signup') }}" class="signup-link">Sign Up</a>
+</div>
+{% endblock %}

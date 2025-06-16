@@ -10,9 +10,9 @@
 {% block body %}
 <a href="{{ url_for('login') }}"><button class="button">LOGIN</button></a>
 <a href="{{ url_for('signup') }}"> <button class = "button"> Sign Up </button></a>
-<button class = "button">About Us</button>
-<button class = "button">Careers</button>
-<button class = "button">Contact Us</button>
+<a href=" {{ url_for('Aboutus')}}"><button class = "button">About Us</button></a>
+<a href=" {{ url_for('Carrer')}}"><button class = "button">Careers</button></a>
+<a href="{{ url_for('Contact')}}"><button class = "button">Contact</button></a>
 
 
 
