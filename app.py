@@ -9,9 +9,9 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.secret_key = "QuickPark"
- 
 
-db.init_app(app)    
+
+db.init_app(app)
 
 @app.route('/')
 def index():
@@ -59,6 +59,14 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
+def admin_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'admin_id' not in session:
+            return redirect(url_for('admin_login'))
+        return f(*args, **kwargs)
+    return decorated_function
+
 
 
 @app.route("/dashboard")
@@ -66,8 +74,9 @@ def login_required(f):
 def dashboard():
 
     user = User.query.get(session['user_id'])
-    parking_spots = ParkingSpot.query.all()
-    return render_template('dashboard.html', user=user, parking_spots=parking_spots)
+    parking_lots = ParkingLot.query.all()
+    reservations = ReservationParkingSpot.query.filter_by(user_id=user.id).order_by(ReservationParkingSpot.parking_timestamp.desc()).all()
+    return render_template('dashboard.html', user=user, parking_lots=parking_lots,reservations=reservations)
 
 
 @app.route("/logout")
@@ -87,7 +96,93 @@ def Contact():
 def Carrer():
     return render_template('Carrer.html')
 
+@app.route('/summary')
+def summary():
+    user = User.query.get(session['user_id'])
+    reservations = ReservationParkingSpot.query.filter_by(user_id=user.id).all()
+    return render_template('summary.html', user=user, reservations=reservations)
+
+@app.route('/edit_profile', methods=['GET', 'POST'])
+def editprofile():
+    user = User.query.get(session['user_id'])
+    if request.method == 'POST':
+        user.name = request.form.get('name')
+        user.email = request.form.get('email')
+        user.phone = request.form.get('phone')
+        db.session.commit()
+        flash('Profile updated successfully!')
+        return redirect(url_for('dashboard'))
+    return render_template('edit_profile.html', user=user)
+
+@app.route('/admin/add_lot', methods=['GET', 'POST'])
+@admin_required
+def add_lot():
+    if request.method == 'POST':
+        prime_location_name = request.form.get('prime_location_name')
+        address = request.form.get('address')
+        pin_code = request.form.get('pin_code')
+        price = request.form.get('price')
+        max_spots = request.form.get('max_spots')
+
+        new_lot = ParkingLot(
+            prime_location_name=prime_location_name,
+            address=address,
+            pin_code=pin_code,
+            price=float(price),
+            maximum_number_of_spots=int(max_spots)
+        )
+        db.session.add(new_lot)
+        db.session.commit()
+        for i in range(max_spots):
+            spot = ParkingSpot(lot_id=new_lot.id, status='available')
+            db.session.add(spot)
+        db.session.commit()
+
+
+        flash('Parking lot added successfully!')
+        return redirect(url_for('add_parking_lot'))
+    return render_template('add_lot.html')
+
+@app.route('/admin/login', methods=['GET', 'POST'])
+def admin_login():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        admin = Admin.query.filter_by(username=username).first()
+        if admin and check_password_hash(admin.password, password):
+            session['admin_id'] = admin.id
+            return redirect(url_for('add_parking_lot'))
+        else:
+            return render_template('admin_login.html', error='Invalid credentials')
+    return render_template('admin_login.html')
+
+@app.route('/book_lot/<int:lot_id>')
+@login_required
+def book_lot(lot_id):
+    user_id = session['user_id']
+    # Find the first available spot in the selected lot
+    spot = ParkingSpot.query.filter_by(lot_id=lot_id, status='available').first()
+    if not spot:
+        flash('No available spots in this lot.')
+        return redirect(url_for('dashboard'))
+    # Mark spot as booked
+    spot.status = 'booked'
+    reservation = ReservationParkingSpot(
+        spot_id=spot.id,
+        user_id=user_id,
+        parking_timestamp=datetime.utcnow(),
+        parking_cost_per_unit_time=spot.parking_lot.price
+    )
+    db.session.add(reservation)
+    db.session.commit()
+    flash(f'Successfully booked spot {spot.id} in lot {spot.parking_lot.prime_location_name}!')
+    return redirect(url_for('dashboard'))
+
 if __name__ == "__main__":
     with app.app_context():
-        db.create_all()
-    app.run(debug=True)
+        db.create_all()                                
+        if not Admin.query.filter_by(username='admin').first():
+                admin = Admin(username='admin', password=generate_password_hash('yourpassword'))
+                db.session.add(admin)
+                db.session.commit()
+    app.run(debug=True,port= 5000)

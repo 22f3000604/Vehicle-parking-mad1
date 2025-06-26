@@ -5,17 +5,54 @@
     <nav class="dashboard-nav">
         <h2>Welcome, {{ user.name }}</h2>
         <a href="{{ url_for('logout') }}" class="btn">Logout</a>
+        <a href="{{ url_for('summary') }}" class="btn">Summary</a>
+        <a href="{{ url_for('editprofile') }}" class="btn">Edit</a>
     </nav>
     
     <div class="dashboard-content">
+
         <section class="booking-section">
-            <h3>Available Parking Spots</h3>
-            {% for spot in parking_spots %}
-            <div class="spot-card">
-                <p>Spot ID: {{ spot.id }}</p>
-                <p>Status: {{ spot.status }}</p>
-                <a href="{{ url_for('book_spot', spot_id=spot.id) }}" class="btn">Book Now</a>
+            <h3>Available Parking Lots</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Lot</th>
+                        <th>Address</th>
+                        <th>Price</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for lot in parking_lots %}
+                    <tr>
+                        <td>{{ lot.prime_location_name }}</td>
+                        <td>{{ lot.address }}</td>
+                        <td>{{ lot.price }}</td>
+                        <td>
+                            <a href="{{ url_for('book_lot', lot_id=lot.id) }}" class="btn">Book Now</a>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="4">No parking lots available at the moment.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+
+        <!-- User Reservation History -->
+        <section class="history-section">
+            <h3>Your Reservation History</h3>
+            {% for reservation in reservations %}
+            <div class="reservation-card">
+                <p>Lot: {{ reservation.parking_spot.parking_lot.prime_location_name }}</p>
+                <p>Spot ID: {{ reservation.spot_id }}</p>
+                <p>Start: {{ reservation.parking_timestamp }}</p>
+                <p>End: {{ reservation.leaving_timestamp or "Active" }}</p>
             </div>
+            {% else %}
+            <p>No previous reservations.</p>
             {% endfor %}
         </section>
     </div>

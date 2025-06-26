@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block body %}
+<div class="admin-form">
+    <h2>Add Parking Lot</h2>
+    <form method="POST">
+        <input type="text" name="prime_location_name" placeholder="Prime Location Name" required><br>
+        <input type="text" name="address" placeholder="Address" required><br>
+        <input type="text" name="pin_code" placeholder="Pin Code" required><br>
+        <input type="number" name="price" placeholder="Price" required><br>
+        <input type="number" name="max_spots" placeholder="Maximum Number of Spots" required><br>
+        <button type="submit">Add Lot</button>
+    </form>
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <ul>
+        {% for message in messages %}
+          <li>{{ message }}</li>
+        {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+</div>
+{% endblock %} 
