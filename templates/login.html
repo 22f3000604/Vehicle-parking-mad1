@@ -1,26 +1,40 @@
 {% extends "base.html" %}
 {% block head %}
-<h1 class="login-head">Quick Park</h1>
+<h1 class="first">Quick Park</h1>
 {% endblock %}
 
 {% block body %}
-<div class="login-form">
-    <form action="{{ url_for('login') }}" method="POST">
-        <h2 class="login">Log In</h2>
-        <div class="login-form">
-            <label for="username">Username :</label>
-            <input type="text" name="username" id="username" required>
+<div style="display: flex; justify-content: center; align-items: center; min-height: 70vh;">
+    <form action="{{ url_for('login') }}" method="POST" style="background: #f7fafc; border-radius: 12px; box-shadow: 0 4px 16px rgba(43,88,118,0.10); padding: 32px 40px; min-width: 320px; width: 100%; max-width: 400px;">
+        <h2 style="color: #2b5876; text-align: center; margin-bottom: 24px;">Log In</h2>
+        {% if error %}
+        <div class="error-message" style="color: #e74c3c; text-align: center; margin-bottom: 16px;">{{ error }}</div>
+        {% endif %}
+        <div style="margin-bottom: 18px;">
+            <input 
+                type="text" 
+                name="username" 
+                id="username" 
+                placeholder="Username" 
+                required 
+                style="width: 100%; padding: 10px; border-radius: 4px; border: 1px solid #b0c4de; font-size: 1rem;"
+            >
         </div>
-        <div class="login-form">
-            <label for="password">Password :</label>
-            <input type="password" id="password" name="password" required>
+        <div style="margin-bottom: 18px;">
+            <input 
+                type="password" 
+                name="password" 
+                id="password" 
+                placeholder="Password" 
+                required 
+                style="width: 100%; padding: 10px; border-radius: 4px; border: 1px solid #b0c4de; font-size: 1rem;"
+            >
         </div>
-        <button type="submit" class="all-button">Submit</button>
+        <button type="submit" class="all-button" style="background: #2b5876; color: #fff; border: none; padding: 10px 32px; border-radius: 4px; font-size: 1rem; cursor: pointer; width: 100%;">Submit</button>
+        <div style="text-align:center; margin-top: 18px;">
+            <span style="color: #555;">Don't have an account?</span>
+            <a href="{{ url_for('signup') }}" style="color: #2b5876; text-decoration: underline;">Sign Up</a>
+        </div>
     </form>
-</div>
-
-<div class="login-end">
-    <p>Don't have an account?</p>
-    <a href="{{ url_for('signup') }}" class="signup-link">Sign Up</a>
 </div>
 {% endblock %}
