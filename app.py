@@ -69,15 +69,14 @@ def admin_required(f):
 
 
 
+
 @app.route("/dashboard")
 @login_required
 def dashboard():
-
     user = User.query.get(session['user_id'])
     parking_lots = ParkingLot.query.all()
     reservations = ReservationParkingSpot.query.filter_by(user_id=user.id).order_by(ReservationParkingSpot.parking_timestamp.desc()).all()
-    return render_template('dashboard.html', user=user, parking_lots=parking_lots,reservations=reservations)
-
+    return render_template('dashboard.html', user=user, parking_lots=parking_lots, reservations=reservations)
 
 @app.route("/logout")
 def logout():
@@ -160,12 +159,10 @@ def admin_login():
 @login_required
 def book_lot(lot_id):
     user_id = session['user_id']
-    # Find the first available spot in the selected lot
     spot = ParkingSpot.query.filter_by(lot_id=lot_id, status='available').first()
     if not spot:
         flash('No available spots in this lot.')
         return redirect(url_for('dashboard'))
-    # Mark spot as booked
     spot.status = 'booked'
     reservation = ReservationParkingSpot(
         spot_id=spot.id,

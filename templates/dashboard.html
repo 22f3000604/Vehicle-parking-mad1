@@ -1,16 +1,26 @@
 {% extends "base.html" %}
 
+{% block head %}
+<h1 class="first">Quick Park</h1>
+{% endblock %}
+
 {% block body %}
-<div class="dashboard-container">
-    <nav class="dashboard-nav">
-        <h2>Welcome, {{ user.name }}</h2>
-        <a href="{{ url_for('logout') }}" class="btn">Logout</a>
-        <a href="{{ url_for('summary') }}" class="btn">Summary</a>
-        <a href="{{ url_for('editprofile') }}" class="btn">Edit</a>
-    </nav>
+
+<div >
+
+<h2>Welcome, {{ user.name }}</h2>
+</div>
+<div class="button-right">
+
+    <a href="{{ url_for('logout') }} "> <button class = "button">Logout</button>
+    </button>
+    <a href="{{ url_for('summary') }}"> <button class="button">Summary</button></a>
+    <a href="{{ url_for('editprofile')}}"> <button class="button">Edit</button></a>
+    </div>
     
     <div class="dashboard-content">
 
+        <!-- Available Parking Lots Table -->
         <section class="booking-section">
             <h3>Available Parking Lots</h3>
             <table>
@@ -41,20 +51,33 @@
             </table>
         </section>
 
-        <!-- User Reservation History -->
         <section class="history-section">
-            <h3>Your Reservation History</h3>
-            {% for reservation in reservations %}
-            <div class="reservation-card">
-                <p>Lot: {{ reservation.parking_spot.parking_lot.prime_location_name }}</p>
-                <p>Spot ID: {{ reservation.spot_id }}</p>
-                <p>Start: {{ reservation.parking_timestamp }}</p>
-                <p>End: {{ reservation.leaving_timestamp or "Active" }}</p>
-            </div>
+            <h3>Your Booked Lots</h3>
+            {% if reservations %}
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Lot Name</th>
+                            <th>Address</th>
+                            <th>Spot ID</th>
+                            <th>Start Time</th>
+                            <th>End Time</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for reservation in reservations %}
+                        <tr>
+                            <td>{{ reservation.parking_spot.parking_lot.prime_location_name }}</td>
+                            <td>{{ reservation.parking_spot.parking_lot.address }}</td>
+                            <td>{{ reservation.spot_id }}</td>
+                            <td>{{ reservation.parking_timestamp }}</td>
+                            <td>{{ reservation.leaving_timestamp or "Active" }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             {% else %}
-            <p>No previous reservations.</p>
-            {% endfor %}
+                <p>No booked lots yet.</p>
+            {% endif %}
         </section>
-    </div>
-</div>
 {% endblock %}

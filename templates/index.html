@@ -1,20 +1,20 @@
 {% extends "base.html" %}
 
 {% block head %}
-
-<h2 class = "first">Quick Park</h2>
-
-
+<h2 class="first">Quick Park</h2>
 {% endblock %}
 
 {% block body %}
-<a href="{{ url_for('login') }}"><button class="button">LOGIN</button></a>
-<a href="{{ url_for('signup') }}"> <button class = "button"> Sign Up </button></a>
-<a href=" {{ url_for('Aboutus')}}"><button class = "button">About Us</button></a>
-<a href=" {{ url_for('Carrer')}}"><button class = "button">Careers</button></a>
-<a href="{{ url_for('Contact')}}"><button class = "button">Contact</button></a>
+<div class="button-right">
+    <a href="{{ url_for('login') }}"><button class="button-">LOGIN</button></a>
+    <a href="{{ url_for('signup') }}"><button class="button-">Sign Up</button></a>
+</div>
+
+<p class="para">
+    Welcome to Quick Park – your hassle-free solution for finding and booking parking spots instantly. 
+    Reserve your space in advance, skip the search, and enjoy a smooth parking experience every time. 
+    Safe, secure, and convenient parking is just a click away!
+</p>
 
 
-
-<p class="para"> Park your vehicle with ease</p>
 {% endblock %}
