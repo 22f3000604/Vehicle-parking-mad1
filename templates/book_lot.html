@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Parking - {{ lot.prime_location_name }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="booking-body">
+    <div class="booking-container">
+        <header class="booking-header">
+            <h1>Book Parking Spot</h1>
+            <a href="{{ url_for('dashboard') }}" class="btn btn-outline">Back to Dashboard</a>
+        </header>
+
+        <div class="booking-content">
+            <div class="lot-info">
+                <h2>{{ lot.prime_location_name }}</h2>
+                <p><strong>Address:</strong> {{ lot.address }}</p>
+                <p><strong>Available Spots:</strong> {{ available_spots|length }}</p>
+                <p><strong>Price:</strong> ₹50 per hour</p>
+            </div>
+
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    <div class="flash-messages">
+                        {% for message in messages %}
+                            <div class="error-message">{{ message }}</div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+
+            <form method="POST" class="booking-form">
+                <div class="form-group">
+                    <label for="spot_id">Select Parking Spot:</label>
+                    <select name="spot_id" id="spot_id" required>
+                        <option value="">Choose a spot...</option>
+                        {% for spot in available_spots %}
+                            <option value="{{ spot.id }}">Spot {{ spot.id }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="start_date">Start Date:</label>
+                    <input type="date" name="start_date" id="start_date" required 
+                           min="{{ today }}" value="{{ today }}">
+                </div>
+
+                <div class="form-group">
+                    <label for="start_time">Start Time:</label>
+                    <input type="time" name="start_time" id="start_time" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="duration">Duration (hours):</label>
+                    <select name="duration" id="duration" required onchange="calculateTotal()">
+                        <option value="">Select duration...</option>
+                        <option value="1">1 hour</option>
+                        <option value="2">2 hours</option>
+                        <option value="3">3 hours</option>
+                        <option value="4">4 hours</option>
+                        <option value="6">6 hours</option>
+                        <option value="8">8 hours</option>
+                        <option value="12">12 hours</option>
+                        <option value="24">24 hours (Full day)</option>
+                    </select>
+                </div>
+
+                <div class="booking-summary">
+                    <h3>Booking Summary</h3>
+                    <div class="summary-row">
+                        <span>Duration:</span>
+                        <span id="summary-duration">-</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Rate:</span>
+                        <span>₹50 per hour</span>
+                    </div>
+                    <div class="summary-row total">
+                        <span><strong>Total Cost:</strong></span>
+                        <span id="total-cost"><strong>₹0</strong></span>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-book" disabled id="book-btn">
+                    Confirm Booking
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function calculateTotal() {
+            const duration = document.getElementById('duration').value;
+            const totalCostElement = document.getElementById('total-cost');
+            const summaryDuration = document.getElementById('summary-duration');
+            const bookBtn = document.getElementById('book-btn');
+            
+            if (duration) {
+                const total = duration * 50;
+                totalCostElement.innerHTML = `<strong>₹${total}</strong>`;
+                summaryDuration.textContent = `${duration} hour${duration > 1 ? 's' : ''}`;
+                bookBtn.disabled = false;
+                bookBtn.textContent = `Confirm Booking - ₹${total}`;
+            } else {
+                totalCostElement.innerHTML = '<strong>₹0</strong>';
+                summaryDuration.textContent = '-';
+                bookBtn.disabled = true;
+                bookBtn.textContent = 'Confirm Booking';
+            }
+        }
+
+        // Set minimum time to current time if today is selected
+        document.getElementById('start_date').addEventListener('change', function() {
+            const selectedDate = new Date(this.value);
+            const today = new Date();
+            const timeInput = document.getElementById('start_time');
+            
+            if (selectedDate.toDateString() === today.toDateString()) {
+                const currentTime = today.toTimeString().slice(0, 5);
+                timeInput.min = currentTime;
+            } else {
+                timeInput.removeAttribute('min');
+            }
+        });
+
+        // Trigger the time validation on page load if today is selected
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('start_date').dispatchEvent(new Event('change'));
+        });
+    </script>
+</body>
+</html>

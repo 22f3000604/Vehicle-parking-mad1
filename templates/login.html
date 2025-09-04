@@ -1,40 +1,70 @@
-{% extends "base.html" %}
-{% block head %}
-<h1 class="first">Quick Park</h1>
-{% endblock %}
-
-{% block body %}
-<div style="display: flex; justify-content: center; align-items: center; min-height: 70vh;">
-    <form action="{{ url_for('login') }}" method="POST" style="background: #f7fafc; border-radius: 12px; box-shadow: 0 4px 16px rgba(43,88,118,0.10); padding: 32px 40px; min-width: 320px; width: 100%; max-width: 400px;">
-        <h2 style="color: #2b5876; text-align: center; margin-bottom: 24px;">Log In</h2>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - QuickPark</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="auth-container">
+        <div class="first">QuickPark</div>
+        
         {% if error %}
-        <div class="error-message" style="color: #e74c3c; text-align: center; margin-bottom: 16px;">{{ error }}</div>
+        <div class="error-message">{{ error }}</div>
         {% endif %}
-        <div style="margin-bottom: 18px;">
-            <input 
-                type="text" 
-                name="username" 
-                id="username" 
-                placeholder="Username" 
-                required 
-                style="width: 100%; padding: 10px; border-radius: 4px; border: 1px solid #b0c4de; font-size: 1rem;"
-            >
+        
+        <form class="auth-form" action="{{ url_for('login') }}" method="POST">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input 
+                    type="text" 
+                    id="username" 
+                    name="username" 
+                    placeholder="Username" 
+                    required
+                >
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input 
+                    type="password" 
+                    id="password" 
+                    name="password" 
+                    placeholder="Password" 
+                    required
+                >
+            </div>
+            
+            <button type="submit" class="auth-button">Login</button>
+        </form>
+        
+        <div class="auth-links">
+            <p>Don't have an account? <a href="{{ url_for('signup') }}">Sign up here</a></p>
+            
+            <!-- Email verification section -->
+            <div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid #e1e5e9;">
+                <p style="font-size: 0.9rem; color: #666; margin-bottom: 10px;">
+                    Didn't receive verification email?
+                </p>
+                <form action="{{ url_for('resend_otp') }}" method="POST" style="display: flex; gap: 10px;">
+                    <input 
+                        type="email" 
+                        name="email" 
+                        placeholder="Enter your email" 
+                        required
+                        style="flex: 1; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 0.9rem;"
+                    >
+                    <button 
+                        type="submit" 
+                        style="background: #10b981; color: white; border: none; padding: 8px 15px; border-radius: 4px; font-size: 0.9rem; cursor: pointer;"
+                    >
+                        Resend
+                    </button>
+                </form>
+            </div>
         </div>
-        <div style="margin-bottom: 18px;">
-            <input 
-                type="password" 
-                name="password" 
-                id="password" 
-                placeholder="Password" 
-                required 
-                style="width: 100%; padding: 10px; border-radius: 4px; border: 1px solid #b0c4de; font-size: 1rem;"
-            >
-        </div>
-        <button type="submit" class="all-button" style="background: #2b5876; color: #fff; border: none; padding: 10px 32px; border-radius: 4px; font-size: 1rem; cursor: pointer; width: 100%;">Submit</button>
-        <div style="text-align:center; margin-top: 18px;">
-            <span style="color: #555;">Don't have an account?</span>
-            <a href="{{ url_for('signup') }}" style="color: #2b5876; text-decoration: underline;">Sign Up</a>
-        </div>
-    </form>
-</div>
-{% endblock %}
+    </div>
+</body>
+</html>
