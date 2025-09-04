@@ -1,83 +1,127 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - QuickPark</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="dashboard-body">
+    <div class="dashboard-container">
+        <!-- Header -->
+        <header class="dashboard-header">
+            <div class="header-content">
+                <h1 class="app-title">QuickPark</h1>
+                <div class="user-actions">
+                    <span class="welcome-text">Welcome, {{ user.name }}!</span>
+                    <a href="{{ url_for('logout') }}" class="btn btn-outline">Logout</a>
+                </div>
+            </div>
+        </header>
 
-{% block head %}
-<h1 class="first">Quick Park</h1>
-{% endblock %}
-
-{% block body %}
-
-<div >
-
-<h2>Welcome, {{ user.name }}</h2>
-</div>
-<div class="button-right">
-
-    <a href="{{ url_for('logout') }} "> <button class = "button">Logout</button>
-    </button>
-    <a href="{{ url_for('summary') }}"> <button class="button">Summary</button></a>
-    <a href="{{ url_for('editprofile')}}"> <button class="button">Edit</button></a>
-    </div>
-    
-    <div class="dashboard-content">
-
-        <!-- Available Parking Lots Table -->
-        <section class="booking-section">
-            <h3>Available Parking Lots</h3>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Lot</th>
-                        <th>Address</th>
-                        <th>Price</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for lot in parking_lots %}
-                    <tr>
-                        <td>{{ lot.prime_location_name }}</td>
-                        <td>{{ lot.address }}</td>
-                        <td>{{ lot.price }}</td>
-                        <td>
-                            <a href="{{ url_for('book_lot', lot_id=lot.id) }}" class="btn">Book Now</a>
-                        </td>
-                    </tr>
-                    {% else %}
-                    <tr>
-                        <td colspan="4">No parking lots available at the moment.</td>
-                    </tr>
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for message in messages %}
+                        <div class="success-message">{{ message }}</div>
                     {% endfor %}
-                </tbody>
-            </table>
-        </section>
-
-        <section class="history-section">
-            <h3>Your Booked Lots</h3>
-            {% if reservations %}
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Lot Name</th>
-                            <th>Address</th>
-                            <th>Spot ID</th>
-                            <th>Start Time</th>
-                            <th>End Time</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for reservation in reservations %}
-                        <tr>
-                            <td>{{ reservation.parking_spot.parking_lot.prime_location_name }}</td>
-                            <td>{{ reservation.parking_spot.parking_lot.address }}</td>
-                            <td>{{ reservation.spot_id }}</td>
-                            <td>{{ reservation.parking_timestamp }}</td>
-                            <td>{{ reservation.leaving_timestamp or "Active" }}</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            {% else %}
-                <p>No booked lots yet.</p>
+                </div>
             {% endif %}
-        </section>
-{% endblock %}
+        {% endwith %}
+
+        <!-- Main Content -->
+        <main class="dashboard-main">
+            <!-- Quick Stats -->
+            <section class="stats-section">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h3>Total Reservations</h3>
+                        <p class="stat-number">{{ reservations|length }}</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Available Lots</h3>
+                        <p class="stat-number">{{ parking_lots|length }}</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Available Parking Lots -->
+            <section class="parking-lots-section">
+                <h2>Available Parking Lots</h2>
+                {% if parking_lots %}
+                <div class="lots-grid">
+                    {% for lot in parking_lots %}
+                    <div class="lot-card">
+                        <div class="lot-header">
+                            <h3>{{ lot.prime_location_name }}</h3>
+                            <span class="lot-price">₹50/hr</span>
+                        </div>
+                        <div class="lot-details">
+                            <p><strong>Address:</strong> {{ lot.address }}</p>
+                            <p><strong>PIN:</strong> {{ lot.pin_code }}</p>
+                            <p><strong>Total Spots:</strong> {{ lot.maximum_number_of_spots }}</p>
+                            <p><strong>Available Spots:</strong> {{ lot.available_spots_count() }}</p>
+                        </div>
+                        <div class="lot-actions">
+                            {% if lot.available_spots_count() > 0 %}
+                                <a href="{{ url_for('book_lot', lot_id=lot.id) }}" class="btn btn-primary">Book Now</a>
+                            {% else %}
+                                <button class="btn btn-disabled" disabled>No Spots Available</button>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="empty-state">
+                    <p>No parking lots available at the moment.</p>
+                </div>
+                {% endif %}
+            </section>
+
+            <!-- Recent Reservations -->
+            <section class="reservations-section">
+                <h2>Your Reservations</h2>
+                {% if reservations %}
+                <div class="reservations-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Location</th>
+                                <th>Spot ID</th>
+                                <th>Booking Time</th>
+                                <th>Price</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for reservation in reservations %}
+                            <tr>
+                                <td>{{ reservation.spot.parking_lot.prime_location_name }}</td>
+                                <td>Spot {{ reservation.spot.id }}</td>
+                                <td>
+                                    {{ reservation.start_time.strftime('%Y-%m-%d %H:%M') }}<br>
+                                    <small>to {{ reservation.end_time.strftime('%H:%M') }}</small>
+                                </td>
+                                <td>₹{{ reservation.total_cost }} ({{ reservation.duration_hours }}h)</td>
+                                <td>
+                                    <span class="status-badge status-{{ reservation.status }}">
+                                        {{ reservation.status|title }}
+                                    </span>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="empty-state">
+                    <p>No reservations yet. Book your first parking spot!</p>
+                </div>
+                {% endif %}
+            </section>
+        </main>
+    </div>
+</body>
+</html>

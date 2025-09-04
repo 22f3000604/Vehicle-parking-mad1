@@ -1,20 +1,24 @@
 {% extends "base.html" %}
 
 {% block head %}
-<h2 class="first">Quick Park</h2>
 {% endblock %}
 
 {% block body %}
-<div class="button-right">
-    <a href="{{ url_for('login') }}"><button class="button-">LOGIN</button></a>
-    <a href="{{ url_for('signup') }}"><button class="button-">Sign Up</button></a>
+<div class="home-container">
+    <div class="home-header">
+        <h2 class="first">Quick Park</h2>
+        <div class="button-right">
+            <a href="{{ url_for('login') }}"><button class="button-">LOGIN</button></a>
+            <a href="{{ url_for('signup') }}"><button class="button-">Sign Up</button></a>
+        </div>
+    </div>
+    
+    <div class="home-content">
+        <p class="para">
+            Welcome to Quick Park – your hassle-free solution for finding and booking parking spots instantly. 
+            Reserve your space in advance, skip the search, and enjoy a smooth parking experience every time. 
+            Safe, secure, and convenient parking is just a click away!
+        </p>
+    </div>
 </div>
-
-<p class="para">
-    Welcome to Quick Park – your hassle-free solution for finding and booking parking spots instantly. 
-    Reserve your space in advance, skip the search, and enjoy a smooth parking experience every time. 
-    Safe, secure, and convenient parking is just a click away!
-</p>
-
-
 {% endblock %}

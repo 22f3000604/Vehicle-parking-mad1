@@ -20,4 +20,16 @@
       {% endif %}
     {% endwith %}
 </div>
-{% endblock %} 
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.querySelector('form').addEventListener('submit', function(event) {
+        var maxSpots = document.querySelector('input[name="max_spots"]').value;
+        for (var i = 0; i < maxSpots; i++) {
+            var spot = new ParkingSpot({{ new_lot.id }}, 'available');
+            db.session.add(spot);
+        }
+    });
+</script>
+{% endblock %}
